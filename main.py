@@ -5,7 +5,7 @@ import pygame
 from pygame.locals import *
 
 from World import World
-from asdasd import TILES
+from tiles import TILES
 
 """
 All PyGame stuff is here (rendering & inputs)

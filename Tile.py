@@ -28,6 +28,17 @@ class Tile(ABC):
     def update(self):
         ...
 
+    def update_position(self, possible_movement: Tuple[Directions, ...]):
+        for direction in possible_movement:
+            next_position = self.get_next_position(direction)
+            # TODO add density for water
+            if not self.world.is_position_inside_scene(*next_position):
+                continue
+            tile_in_next_position = self.world.get_tile_at_position(*next_position)
+            if not tile_in_next_position:
+                self.move_to_position(next_position)
+                break
+
     def get_next_position(self, direction: Directions) -> Tuple[int, int]:
         return self.x + direction.value[0], self.y + direction.value[1]
 
