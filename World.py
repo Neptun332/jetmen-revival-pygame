@@ -15,14 +15,12 @@ class World:
             init_matrix.append([None for _ in range(width)])
         self.spatial_matrix: Tuple[List[Tile], ...] = tuple(init_matrix)
 
-    def add_tile(self, tile_type: type, x: int, y: int) -> Tile:
-        """ adds a tile at the given position and returns it """
-        new_tile: Tile = tile_type(x, y, self)
+    def add_tile(self, tile_type: type, x: int, y: int):
         if not self.spatial_matrix[y][x]:
+            new_tile: Tile = tile_type(x, y, self)
             self.tiles.append(new_tile)
             self.moving_tiles.append(new_tile)
             self.spatial_matrix[y][x] = new_tile
-        return new_tile
 
     def update(self):
         for tile in self.moving_tiles:

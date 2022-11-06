@@ -4,6 +4,7 @@ from typing import List, Tuple
 import pygame
 from pygame.locals import *
 
+from Directions import Directions
 from World import World
 from tiles import TILES
 
@@ -124,11 +125,12 @@ def main():
         if pygame.mouse.get_pressed()[0]:
             world.add_tile(TILES[selected_tile], mouse_position[0], mouse_position[1])
             if pygame.key.get_pressed()[K_LCTRL]:
-                world.add_tile(
-                    TILES[selected_tile],
-                    mouse_position[0],
-                    mouse_position[1]
-                )
+                for direction in Directions:
+                    world.add_tile(
+                        TILES[selected_tile],
+                        mouse_position[0] + direction.value[0],
+                        mouse_position[1] + direction.value[1]
+                    )
         # elif pygame.mouse.get_pressed()[2]:
         #     world.delete_tile(mouse_position[0], mouse_position[1])
         #     if pygame.key.get_pressed()[K_LCTRL]:
