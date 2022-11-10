@@ -1,11 +1,11 @@
 import abc
-from abc import ABC
 from typing import Tuple
 
 from Directions import Directions
+from tiles.TIle import Tile
 
 
-class Tile(ABC):
+class MovingTile(Tile):
     NAME: str
 
     def __init__(
@@ -15,14 +15,8 @@ class Tile(ABC):
             y: int,
             world: 'World'
     ):
-        # render stuff
-        self.color = color
+        super().__init__(color, x, y)
         self.settle_color = color
-        # # Physics stuff
-        # self.density = density
-        # position
-        self.x = x
-        self.y = y
         self.world = world
         self.position_should_be_updated = True  # False if tile have neighbours preventing it from moving
         self.tile_have_moved = False

@@ -14,8 +14,8 @@ All PyGame stuff is here (rendering & inputs)
 
 pygame.init()
 
-FONT = pygame.font.Font('font.otf', 18)
-SMALL_FONT = pygame.font.Font('font.otf', 14)
+FONT = pygame.font.Font('resources/font.otf', 18)
+SMALL_FONT = pygame.font.Font('resources/font.otf', 14)
 
 # Game Setup
 FPS = 60

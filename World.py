@@ -1,6 +1,6 @@
-from typing import List, Tuple
+from typing import List, Tuple, Optional
 
-from Tile import Tile
+from tiles.MovingTile import Tile, MovingTile
 
 
 class World:
@@ -9,14 +9,14 @@ class World:
         self.width = width
         self.height = height
         self.tiles: List[Tile] = []
-        self.moving_tiles: List[Tile] = []
+        self.moving_tiles: List[MovingTile] = []
         init_matrix: List[List[Tile or None]] = []
         for _ in range(height):
             init_matrix.append([None for _ in range(width)])
         self.spatial_matrix: Tuple[List[Tile], ...] = tuple(init_matrix)
 
     def add_tile(self, tile_type: type, x: int, y: int):
-        if not self.spatial_matrix[y][x]:
+        if self.is_position_inside_scene(x=x, y=y) and not self.spatial_matrix[y][x]:
             new_tile: Tile = tile_type(x, y, self)
             self.tiles.append(new_tile)
             self.moving_tiles.append(new_tile)
@@ -26,7 +26,7 @@ class World:
         for tile in self.moving_tiles:
             tile.update()
 
-    def get_tile_at_position(self, x: int, y: int):
+    def get_tile_at_position(self, x: int, y: int) -> Optional[Tile]:
         return self.spatial_matrix[y][x]
 
     def move_tile_from_one_position_to_other(self, start_position: Tuple[int, int], end_position: Tuple[int, int]):
