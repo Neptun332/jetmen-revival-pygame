@@ -48,6 +48,7 @@ class World:
         self.moving_tiles = [tile for tile in self.moving_tiles if tile not in self.moving_tiles_to_remove]
         self.moving_tiles_to_remove.clear()
 
+    def update_moving(self):
         for tile in self.moving_tiles:
             tile.update()
 

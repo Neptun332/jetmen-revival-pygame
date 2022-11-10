@@ -5,6 +5,7 @@ import pygame
 from pygame.locals import *
 
 from Directions import Directions
+from Explosion import Explosion
 from World import World
 from tiles import TILES
 
@@ -132,16 +133,19 @@ def main():
                         mouse_position[1] + direction.value[1]
                     )
         elif pygame.mouse.get_pressed()[2]:
-            world.remove_tile(mouse_position[0], mouse_position[1])
-            if pygame.key.get_pressed()[K_LCTRL]:
-                for direction in Directions:
-                    world.remove_tile(
-                        mouse_position[0] + direction.value[0],
-                        mouse_position[1] + direction.value[1]
-                    )
+            a = Explosion(mouse_position[0], mouse_position[1], 5, world)
+            a.trigger()
+            # world.remove_tile(mouse_position[0], mouse_position[1])
+            # if pygame.key.get_pressed()[K_LCTRL]:
+            #     for direction in Directions:
+            #         world.remove_tile(
+            #             mouse_position[0] + direction.value[0],
+            #             mouse_position[1] + direction.value[1]
+            #         )
         # update physics
+        world.update()
         if not pause:
-            world.update()
+            world.update_moving()
         # render
         render(world, selected_tile, mouse_position, pause, tiles_info)
         fpsClock.tick(FPS)
