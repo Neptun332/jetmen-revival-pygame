@@ -131,14 +131,14 @@ def main():
                         mouse_position[0] + direction.value[0],
                         mouse_position[1] + direction.value[1]
                     )
-        # elif pygame.mouse.get_pressed()[2]:
-        #     world.delete_tile(mouse_position[0], mouse_position[1])
-        #     if pygame.key.get_pressed()[K_LCTRL]:
-        #         for direction in Dir.ALL:
-        #             world.delete_tile(
-        #                 mouse_position[0] + direction[0],
-        #                 mouse_position[1] + direction[1]
-        #             )
+        elif pygame.mouse.get_pressed()[2]:
+            world.remove_tile(mouse_position[0], mouse_position[1])
+            if pygame.key.get_pressed()[K_LCTRL]:
+                for direction in Directions:
+                    world.remove_tile(
+                        mouse_position[0] + direction.value[0],
+                        mouse_position[1] + direction.value[1]
+                    )
         # update physics
         if not pause:
             world.update()

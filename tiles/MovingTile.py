@@ -20,13 +20,14 @@ class MovingTile(Tile):
         self.world = world
         self.position_should_be_updated = True  # False if tile have neighbours preventing it from moving
         self.tile_have_moved = False
+        self.active = True
 
     @abc.abstractmethod
     def update(self):
         ...
 
     def update_position(self, possible_movement: Tuple[Directions, ...]):
-        if self.position_should_be_updated:
+        if self.position_should_be_updated and self.active:
             self.color = (255, 0, 0)
             tile_have_moved = False
             for direction in possible_movement:
@@ -74,3 +75,7 @@ class MovingTile(Tile):
         )
         self.x = position[0]
         self.y = position[1]
+
+    def deactivate(self):
+        self.wake_up_neighbours()
+        self.active = False

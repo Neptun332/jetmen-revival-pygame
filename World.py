@@ -10,6 +10,13 @@ class World:
         self.height = height
         self.tiles: List[Tile] = []
         self.moving_tiles: List[MovingTile] = []
+
+        self.tiles_to_add: List[Tile] = []
+        self.moving_tiles_to_add: List[Tile] = []
+
+        self.tiles_to_remove: List[Tile] = []
+        self.moving_tiles_to_remove: List[Tile] = []
+
         init_matrix: List[List[Tile or None]] = []
         for _ in range(height):
             init_matrix.append([None for _ in range(width)])
@@ -18,11 +25,29 @@ class World:
     def add_tile(self, tile_type: type, x: int, y: int):
         if self.is_position_inside_scene(x=x, y=y) and not self.spatial_matrix[y][x]:
             new_tile: Tile = tile_type(x, y, self)
-            self.tiles.append(new_tile)
-            self.moving_tiles.append(new_tile)
+            self.tiles_to_add.append(new_tile)
+            self.moving_tiles_to_add.append(new_tile)
             self.spatial_matrix[y][x] = new_tile
 
+    def remove_tile(self, x: int, y: int):
+        if self.is_position_inside_scene(x=x, y=y) and self.spatial_matrix[y][x]:
+            tile_to_remove = self.spatial_matrix[y][x]
+            tile_to_remove.deactivate()
+            self.tiles_to_remove.append(tile_to_remove)
+            self.moving_tiles_to_remove.append(tile_to_remove)
+            self.spatial_matrix[y][x] = None
+
     def update(self):
+        self.tiles += self.tiles_to_add
+        self.tiles_to_add.clear()
+        self.moving_tiles += self.moving_tiles_to_add
+        self.moving_tiles_to_add.clear()
+
+        self.tiles = [tile for tile in self.tiles if tile not in self.tiles_to_remove]
+        self.tiles_to_remove.clear()
+        self.moving_tiles = [tile for tile in self.moving_tiles if tile not in self.moving_tiles_to_remove]
+        self.moving_tiles_to_remove.clear()
+
         for tile in self.moving_tiles:
             tile.update()
 
