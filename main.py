@@ -8,6 +8,7 @@ from Directions import Directions
 from Explosion import Explosion
 from World import World
 from tiles import TILES
+from utils.semirandom import randint_negative_to_positive
 
 """
 All PyGame stuff is here (rendering & inputs)
@@ -113,7 +114,16 @@ def main():
                 pygame.quit()
                 sys.exit()
             if event.type == MOUSEWHEEL:
-                pass
+                if event.y == -1:
+                    if selected_tile == 0:
+                        selected_tile = len(TILES) - 1
+                    else:
+                        selected_tile -= 1
+                else:
+                    if selected_tile == len(TILES) - 1:
+                        selected_tile = 0
+                    else:
+                        selected_tile += 1
             if event.type == KEYDOWN:
                 if event.unicode == " ":
                     pause = not pause
@@ -129,8 +139,8 @@ def main():
                 for direction in Directions:
                     world.add_tile(
                         TILES[selected_tile],
-                        mouse_position[0] + direction.value[0],
-                        mouse_position[1] + direction.value[1]
+                        mouse_position[0] + direction.value[0] + randint_negative_to_positive(4),
+                        mouse_position[1] + direction.value[1] + randint_negative_to_positive(4)
                     )
         elif pygame.mouse.get_pressed()[2]:
             a = Explosion(mouse_position[0], mouse_position[1], 5, world)

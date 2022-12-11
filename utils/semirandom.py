@@ -22,6 +22,10 @@ def randint(max_num: int) -> int:
     return _NUMBERS[_CURSOR] % max_num
 
 
+def randint_negative_to_positive(max_num: int) -> int:
+    return randint(2) * -1 * randint(max_num)
+
+
 if __name__ == "__main__":
     start_time = time()
     for _ in range(1000000):

@@ -22,9 +22,11 @@ class World:
             init_matrix.append([None for _ in range(width)])
         self.spatial_matrix: Tuple[List[Tile], ...] = tuple(init_matrix)
 
+        self.gravity = 5
+
     def add_tile(self, tile_type: type, x: int, y: int):
         if self.is_position_inside_scene(x=x, y=y) and not self.spatial_matrix[y][x]:
-            new_tile: Tile = tile_type(x, y, self)
+            new_tile: Tile = tile_type(x, y, self, self.gravity)
             self.tiles_to_add.append(new_tile)
             self.moving_tiles_to_add.append(new_tile)
             self.spatial_matrix[y][x] = new_tile
@@ -58,6 +60,11 @@ class World:
     def move_tile_from_one_position_to_other(self, start_position: Tuple[int, int], end_position: Tuple[int, int]):
         tile = self.spatial_matrix[start_position[1]][start_position[0]]
         self.spatial_matrix[start_position[1]][start_position[0]] = None
+        self.spatial_matrix[end_position[1]][end_position[0]] = tile
+
+    def swap_tile_at_positions(self, start_position: Tuple[int, int], end_position: Tuple[int, int]):
+        tile = self.spatial_matrix[start_position[1]][start_position[0]]
+        self.spatial_matrix[start_position[1]][start_position[0]] = self.spatial_matrix[end_position[1]][end_position[0]]
         self.spatial_matrix[end_position[1]][end_position[0]] = tile
 
     def is_position_inside_scene(self, x: int, y: int) -> bool:
