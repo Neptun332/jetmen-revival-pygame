@@ -64,8 +64,19 @@ class World:
 
     def swap_tile_at_positions(self, start_position: Tuple[int, int], end_position: Tuple[int, int]):
         tile = self.spatial_matrix[start_position[1]][start_position[0]]
-        self.spatial_matrix[start_position[1]][start_position[0]] = self.spatial_matrix[end_position[1]][end_position[0]]
+        end_position_tile = self.spatial_matrix[end_position[1]][end_position[0]]
+
+        if tile:
+            tile.wake_up_neighbours()
+            tile.move_coordinates_to(end_position)
+
+        if end_position_tile:
+            end_position_tile.wake_up_neighbours()
+            end_position_tile.move_coordinates_to(start_position)
+
+        self.spatial_matrix[start_position[1]][start_position[0]] = end_position_tile
         self.spatial_matrix[end_position[1]][end_position[0]] = tile
+
 
     def is_position_inside_scene(self, x: int, y: int) -> bool:
         if not 0 <= x < self.width:

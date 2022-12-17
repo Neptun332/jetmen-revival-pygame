@@ -5,7 +5,7 @@ from utils.semirandom import randint
 
 class SandTile(MovingTile):
     NAME = "Sand"
-
+    DENSITY = 10
     POSSIBLE_MOVEMENT = (Directions.DOWN, Directions.DOWN_LEFT, Directions.DOWN_RIGHT)
 
     def __init__(self, x: int, y: int, world: 'World', velocity):
@@ -14,7 +14,8 @@ class SandTile(MovingTile):
             x=x,
             y=y,
             world=world,
-            velocity=velocity
+            velocity=velocity,
+            density=self.DENSITY
         )
 
     def update(self):

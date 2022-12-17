@@ -14,9 +14,10 @@ class MovingTile(Tile):
             x: int,
             y: int,
             world: 'World',
+            density: int,
             velocity: int = 5
     ):
-        super().__init__(color, x, y)
+        super().__init__(color, x, y, density)
         self.settle_color = color
         self.world = world
         self.velocity = velocity
@@ -32,12 +33,12 @@ class MovingTile(Tile):
         if self.position_should_be_updated and self.active:
             self.color = (255, 0, 0)
             tile_have_moved = False
+
             for direction in possible_movement:
                 next_positions = self.get_indexes_on_the_way_to_next_position(direction)
-                empty_position = self.get_closes_empty_position(next_positions)
-                if empty_position:
-                    self.wake_up_neighbours()
-                    self.move_to_position(empty_position)
+                position_that_is_able_to_move = self.get_closes_position_that_is_able_to_move(next_positions)
+                if position_that_is_able_to_move:
+                    self.swap_position(position_that_is_able_to_move)
                     tile_have_moved = True
 
                 if tile_have_moved:
@@ -77,6 +78,20 @@ class MovingTile(Tile):
             last_free_position = position_on_the_way
         return last_free_position
 
+    def get_closes_position_that_is_able_to_move(
+            self,
+            next_positions: List[Tuple[int, int]]
+    ) -> Optional[Tuple[int, int]]:
+        last_free_position = None
+        for position_on_the_way in next_positions:
+            if not self.world.is_position_inside_scene(*position_on_the_way):
+                break
+            tile_in_next_position = self.world.get_tile_at_position(*position_on_the_way)
+            if not self.is_denser_than(tile_in_next_position):
+                break
+            last_free_position = position_on_the_way
+        return last_free_position
+
     def get_next_position(self, direction: Directions, velocity: int) -> Tuple[int, int]:
         return direction.value[0] * velocity + self.x, direction.value[1] * velocity + self.y
 
@@ -88,6 +103,15 @@ class MovingTile(Tile):
             start_position=(self.x, self.y),
             end_position=position
         )
+        self.move_coordinates_to(position)
+
+    def swap_position(self, position: Tuple[int, int]):
+        self.world.swap_tile_at_positions(
+            start_position=(self.x, self.y),
+            end_position=position
+        )
+
+    def move_coordinates_to(self, position: Tuple[int, int]):
         self.x = position[0]
         self.y = position[1]
 
