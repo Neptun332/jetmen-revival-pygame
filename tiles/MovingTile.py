@@ -1,4 +1,3 @@
-import abc
 from typing import Tuple, List, Optional
 
 from Directions import Directions
@@ -17,13 +16,15 @@ class MovingTile(Tile):
             density: int,
             velocity: int = 5
     ):
-        super().__init__(color, x, y, density)
+        super().__init__(color, x, y, world, density)
         self.settle_color = color
-        self.world = world
         self.velocity = velocity
         self.position_should_be_updated = True  # False if tile have neighbours preventing it from moving
         self.tile_have_moved = False
         self.active = True
+
+    def is_movable(self):
+        return True
 
     def update_position(self, possible_movement: Tuple[Directions, ...]):
         if self.position_should_be_updated and self.active:
@@ -44,18 +45,6 @@ class MovingTile(Tile):
                 self.sleep_tile()
         else:
             self.color = self.settle_color
-
-    def wake_up_neighbours(self):
-        for direction in Directions:
-            neighbour_position = self.get_next_position(direction, 1)
-            if not self.world.is_position_inside_scene(*neighbour_position):
-                continue
-            tile = self.world.get_tile_at_position(
-                x=self.x + direction.value[0],
-                y=self.y + + direction.value[1]
-            )
-            if tile and issubclass(tile.__class__, MovingTile):
-                tile.wake_up_tile()
 
     def wake_up_tile(self):
         self.position_should_be_updated = True
@@ -88,9 +77,6 @@ class MovingTile(Tile):
             last_free_position = position_on_the_way
         return last_free_position
 
-    def get_next_position(self, direction: Directions, velocity: int) -> Tuple[int, int]:
-        return direction.value[0] * velocity + self.x, direction.value[1] * velocity + self.y
-
     def get_indexes_on_the_way_to_next_position(self, direction: Directions) -> List[Tuple[int, int]]:
         return [self.get_next_position(direction, v) for v in range(1, self.velocity)]
 
@@ -110,7 +96,3 @@ class MovingTile(Tile):
     def move_coordinates_to(self, position: Tuple[int, int]):
         self.x = position[0]
         self.y = position[1]
-
-    def deactivate(self):
-        self.wake_up_neighbours()
-        self.active = False
