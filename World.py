@@ -28,7 +28,8 @@ class World:
         if self.is_position_inside_scene(x=x, y=y) and not self.spatial_matrix[y][x]:
             new_tile: Tile = tile_type(x, y, self, self.gravity)
             self.tiles_to_add.append(new_tile)
-            self.moving_tiles_to_add.append(new_tile)
+            if issubclass(new_tile.__class__, MovingTile):
+                self.moving_tiles_to_add.append(new_tile)
             self.spatial_matrix[y][x] = new_tile
 
     def remove_tile(self, x: int, y: int):
@@ -76,7 +77,6 @@ class World:
 
         self.spatial_matrix[start_position[1]][start_position[0]] = end_position_tile
         self.spatial_matrix[end_position[1]][end_position[0]] = tile
-
 
     def is_position_inside_scene(self, x: int, y: int) -> bool:
         if not 0 <= x < self.width:

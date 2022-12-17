@@ -25,10 +25,6 @@ class MovingTile(Tile):
         self.tile_have_moved = False
         self.active = True
 
-    @abc.abstractmethod
-    def update(self):
-        ...
-
     def update_position(self, possible_movement: Tuple[Directions, ...]):
         if self.position_should_be_updated and self.active:
             self.color = (255, 0, 0)
@@ -58,7 +54,7 @@ class MovingTile(Tile):
                 x=self.x + direction.value[0],
                 y=self.y + + direction.value[1]
             )
-            if tile:
+            if tile and issubclass(tile.__class__, MovingTile):
                 tile.wake_up_tile()
 
     def wake_up_tile(self):
