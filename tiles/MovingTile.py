@@ -61,10 +61,15 @@ class MovingTile(Tile):
     ):
         # TODO use numpy to speedup
         self.force = [sum(force_dim) for force_dim in zip(force, self.force)]
-        self.force_degrees = math.degrees(math.atan(self.y / self.x))
-        # self.normalized_force = [float(f) / max(self.force) for f in self.force]
+        self.force_degrees = self.calculate_vector_degrees(self.force)
         self.force_magnitude = math.sqrt(sum(f * f for f in self.force))
         self.velocity = int(self.force_magnitude)
+
+    def calculate_vector_degrees(self, vector: Tuple[int, int]):
+        # TODO change this to numpy!
+        if vector[1] == 0:
+            return 1.5 * math.pi
+        return math.degrees(math.atan(vector[0] / vector[1]))
 
     def update_based_on_force(self) -> bool:
         direction = self.translate_normalized_force_to_direction()
@@ -80,8 +85,8 @@ class MovingTile(Tile):
             return False
 
     def translate_normalized_force_to_direction(self) -> Directions:
-        dirs = [Directions.UP, Directions.UP_RIGHT, Directions.RIGHT, Directions.DOWN_RIGHT,
-                Directions.DOWN, Directions.DOWN_LEFT, Directions.LEFT, Directions.UP_LEFT]
+        dirs = [Directions.DOWN, Directions.DOWN_LEFT, Directions.LEFT, Directions.UP_LEFT,
+                Directions.UP, Directions.UP_RIGHT, Directions.RIGHT, Directions.DOWN_RIGHT, ]
         ix = round(self.force_degrees / (360. / len(dirs)))
         return dirs[ix % len(dirs)]
 
