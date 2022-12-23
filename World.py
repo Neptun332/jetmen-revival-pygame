@@ -23,10 +23,11 @@ class World:
         self.spatial_matrix: Tuple[List[Tile], ...] = tuple(init_matrix)
 
         self.gravity = 5
+        self.gravity_force = (0, 1)
 
     def add_tile(self, tile_type: type, x: int, y: int):
         if self.is_position_inside_scene(x=x, y=y) and not self.spatial_matrix[y][x]:
-            new_tile: Tile = tile_type(x, y, self, self.gravity)
+            new_tile: Tile = tile_type(x, y, self, self.gravity_force)
             self.tiles_to_add.append(new_tile)
             if issubclass(new_tile.__class__, MovingTile):
                 self.moving_tiles_to_add.append(new_tile)
@@ -53,7 +54,7 @@ class World:
 
     def update_moving(self):
         for tile in self.moving_tiles:
-            tile.update()
+            tile.update(self.gravity_force)
 
     def get_tile_at_position(self, x: int, y: int) -> Optional[Tile]:
         return self.spatial_matrix[y][x]

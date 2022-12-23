@@ -1,3 +1,5 @@
+from typing import Tuple
+
 from tiles import Tile
 from utils.semirandom import randint
 
@@ -7,7 +9,7 @@ class StoneTile(Tile):
     NAME = "Stone"
     DENSITY = 20
 
-    def __init__(self, x: int, y: int, world: 'World', velocity: int):
+    def __init__(self, x: int, y: int, world: 'World', force: Tuple[int, int]):
         super().__init__(
             color=(110 + randint(20), 110 + randint(20), 110 + randint(20)),
             x=x,
