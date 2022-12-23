@@ -52,17 +52,6 @@ class MovingTile(Tile):
     def sleep_tile(self):
         self.position_should_be_updated = False
 
-    def get_closes_empty_position(self, next_positions: List[Tuple[int, int]]) -> Optional[Tuple[int, int]]:
-        last_free_position = None
-        for position_on_the_way in next_positions:
-            if not self.world.is_position_inside_scene(*position_on_the_way):
-                break
-            tile_in_next_position = self.world.get_tile_at_position(*position_on_the_way)
-            if tile_in_next_position:
-                break
-            last_free_position = position_on_the_way
-        return last_free_position
-
     def get_closes_position_that_is_able_to_move(
             self,
             next_positions: List[Tuple[int, int]]
@@ -79,13 +68,6 @@ class MovingTile(Tile):
 
     def get_indexes_on_the_way_to_next_position(self, direction: Directions) -> List[Tuple[int, int]]:
         return [self.get_next_position(direction, v) for v in range(1, self.velocity)]
-
-    def move_to_position(self, position: Tuple[int, int]):
-        self.world.move_tile_from_one_position_to_other(
-            start_position=(self.x, self.y),
-            end_position=position
-        )
-        self.move_coordinates_to(position)
 
     def swap_position(self, position: Tuple[int, int]):
         self.world.swap_tile_at_positions(
