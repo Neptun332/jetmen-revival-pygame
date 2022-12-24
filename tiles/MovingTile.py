@@ -38,15 +38,11 @@ class MovingTile(Tile):
 
             self.update_force(force)
 
-            tile_have_moved = self.update_based_on_force()
-            possible_movement = [direction for direction in possible_movement if direction != self.direction]
+            tile_have_moved = self.update_position_according_to_direction(self.force_direction)
+            possible_movement = [direction for direction in possible_movement if direction != self.force_direction]
             if not tile_have_moved:
                 for direction in possible_movement:
-                    next_positions = self.get_indexes_on_the_way_to_next_position(direction)
-                    position_that_is_able_to_move = self.get_closes_position_that_is_able_to_move(next_positions)
-                    if position_that_is_able_to_move:
-                        self.swap_position(position_that_is_able_to_move)
-                        tile_have_moved = True
+                    tile_have_moved = self.update_position_according_to_direction(direction)
 
                     if tile_have_moved:
                         break
@@ -63,10 +59,9 @@ class MovingTile(Tile):
         # TODO use numpy to speedup
         self.force = [sum(force_dim) for force_dim in zip(force, self.force)]
         self.force_degrees = self.calculate_vector_degrees(self.force)
+        self.force_direction = self.translate_normalized_force_to_direction()
         self.force_magnitude = math.sqrt(sum(f * f for f in self.force))
         self.velocity = int(self.force_magnitude)
-        self.direction = self.translate_normalized_force_to_direction()
-
 
     def calculate_vector_degrees(self, vector: Tuple[int, int]):
         # TODO change this to numpy!
@@ -74,15 +69,15 @@ class MovingTile(Tile):
             return 1.5 * math.pi
         return math.degrees(math.atan(vector[0] / vector[1]))
 
-    def update_based_on_force(self) -> bool:
-        next_positions = self.get_indexes_on_the_way_to_next_position(self.direction)
+    def update_position_according_to_direction(self, direction: Directions) -> bool:
+        next_positions = self.get_indexes_on_the_way_to_next_position(direction)
         position_that_is_able_to_move = self.get_closes_position_that_is_able_to_move(next_positions)
         if position_that_is_able_to_move:
             self.swap_position(position_that_is_able_to_move)
             return True
         else:
-            self.velocity = 1
             self.force = (0, 1)
+            self.update_force(self.force)
             return False
 
     def translate_normalized_force_to_direction(self) -> Directions:
@@ -112,7 +107,7 @@ class MovingTile(Tile):
         return last_free_position
 
     def get_indexes_on_the_way_to_next_position(self, direction: Directions) -> List[Tuple[int, int]]:
-        return [self.get_next_position(direction, v+1) for v in range(0, self.velocity)]
+        return [self.get_next_position(direction, v + 1) for v in range(0, self.velocity)]
 
     def swap_position(self, position: Tuple[int, int]):
         self.world.swap_tile_at_positions(
