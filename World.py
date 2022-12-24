@@ -73,6 +73,7 @@ class World:
             tile.move_coordinates_to(end_position)
 
         if end_position_tile:
+            end_position_tile.wake_up_tile()
             end_position_tile.wake_up_neighbours()
             end_position_tile.move_coordinates_to(start_position)
 
